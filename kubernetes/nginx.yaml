@@ -27,22 +27,22 @@ data:
       }
     }
 ---
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: ReplicaSet
 metadata:
   name: nginx
   labels:
     app: nginx
 spec:
-  volumes:
-  - name: nginx-volume
-    configMap:
-      name: nginx-config
-  containers:
-  - name: nginx
-    image: nginx:latest
-    ports:
-    - containerPort: 80
-    volumeMounts:
-    - name: nginx-volume
-      mountPath: /etc/nginx/
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx        # must be the same value as the label in the template
+  template:
+    metadata:
+      labels:
+        app: nginx      # this label is assigned to each pod in the set
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
